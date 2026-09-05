@@ -9,6 +9,8 @@ import {
   deleteNote,
 } from '../controllers/notesController.js';
 
+import { authenticate } from '../middleware/authenticate.js';
+
 import {
   getAllNotesSchema,
   noteIdSchema,
@@ -18,14 +20,36 @@ import {
 
 const router = Router();
 
-router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
+router.use('/notes', authenticate);
 
-router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);
+router.get(
+  '/notes',
+  celebrate(getAllNotesSchema),
+  getAllNotes,
+);
 
-router.post('/notes', celebrate(createNoteSchema), createNote);
+router.get(
+  '/notes/:noteId',
+  celebrate(noteIdSchema),
+  getNoteById,
+);
 
-router.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);
+router.post(
+  '/notes',
+  celebrate(createNoteSchema),
+  createNote,
+);
 
-router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
+router.patch(
+  '/notes/:noteId',
+  celebrate(updateNoteSchema),
+  updateNote,
+);
+
+router.delete(
+  '/notes/:noteId',
+  celebrate(noteIdSchema),
+  deleteNote,
+);
 
 export default router;
