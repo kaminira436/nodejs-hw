@@ -3,7 +3,7 @@ import createHttpError from 'http-errors';
 import { User } from '../models/user.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
-export const updateAvatar = async (req, res) => {
+export const updateUserAvatar = async (req, res) => {
   if (!req.file) {
     throw createHttpError(400, 'No file');
   }
@@ -13,11 +13,21 @@ export const updateAvatar = async (req, res) => {
     req.user._id,
   );
 
-  req.user.avatar = result.secure_url;
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      avatar: result.secure_url,
+    },
+    {
+      returnDocument: 'after',
+    },
+  );
 
-  await req.user.save();
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
 
   res.status(200).json({
-    url: result.secure_url,
+    url: user.avatar,
   });
 };
